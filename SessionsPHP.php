@@ -1,3 +1,55 @@
+<?php
+session_start();
+
+// Inicializar variables
+if (!isset($_SESSION["worker"])) {
+    $_SESSION["worker"] = '';
+}
+if (!isset($_SESSION['products'])) {
+    $_SESSION['products'] = [
+        'softdrink' => 0,
+        'water' => 0,
+        'chicken' => 0,
+        'eggs' => 0,
+        'rice' => 0,
+    ];
+}
+
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // WORKER NAME
+    if (isset($_POST["worker"])) {
+        $_SESSION["worker"] = htmlspecialchars($_POST["worker"]);
+    }
+
+
+    // SELECT PRODUCT
+    $product = isset($_POST["product"]) ? $_POST["product"] : '';
+
+
+    // CANTIDAD PRODUCTO
+    if (isset($_POST['bAdd']) && $product && isset($_SESSION['products'][$product])) {
+        $_SESSION['products'][$product]++;
+    }
+    if (isset($_POST['bRemove']) && $product && isset($_SESSION['products'][$product])) {
+        if ($_SESSION['products'][$product] > 0) {
+            $_SESSION['products'][$product]--;
+        }
+    }
+    if (isset($_POST['reset'])) {
+        $_SESSION['products'] = [
+            'softdrink' => 0,
+            'water' => 0,
+            'chicken' => 0,
+            'eggs' => 0,
+            'rice' => 0,
+        ];
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,14 +61,17 @@
 
 <body>
     <h1>Práctica Pr4 Sessions PHP</h1>
-    <form action="" method="GET">
-        <h2>Supermarket managment</h2>
-        <!-- CODIGO FORM + PHP PARA WORKER NAME -->
+    <form action="" method="POST">
+        <h2>Supermarket management</h2>
+
+        <!-- Campo del trabajador CORREGIDO  -->
         <label for="worker">Worker name:</label>
-        <input type="worker" name="worker" value="<?php echo isset($_GET['worker']) ? htmlspecialchars($_GET['worker']) : ''; ?>" placeholder="Su nombre" required>
+        <input type="text" name="worker"
+            value="<?php echo htmlspecialchars($_SESSION['worker']); ?>"
+            placeholder="Su nombre" required>
         <br>
 
-        <!-- CODIGO FORM PARA PRODUCT CHOICE -->
+        <!-- Selección de producto -->
         <h3>Choose product: <br></h3>
         <select name="product" id="product">
             <option value="softdrink">Soft drink</option>
@@ -26,17 +81,23 @@
             <option value="rice">Rice</option>
         </select>
 
-        <!-- CODIGO FORM PARA DEEFINIR CANTIDAD -->
-        <h3>Procuct quantity: <br></h3>
-        <button type="add" name="add" value="add">add</button>
-        <button type="remove" name="remove" value="remove">remove</button>
-        <button type="reset" name="reset" value="reset">reset</button>
+        <!-- Botones  -->
+        <h3>Product quantity: <br></h3>
+        <button type="submit" name="bAdd" value="add">Add</button>
+        <button type="submit" name="bRemove" value="remove">Remove</button>
+        <button type="submit" name="reset" value="reset">Reset All</button>
 
-        <!-- CODIGO FORM + PHP PARA MOSTRAR INVENTORY -->
+        <!-- Inventario -->
         <h3>Inventory: <br></h3>
-        <?php echo "Worker name: " . $_GET['worker']; ?>
-        <br>
+        <?php
+        // Mostrar trabajador
+        echo "Worker name: " . htmlspecialchars($_SESSION['worker']) . "<br>";
 
+        // Mostrar productos
+        foreach ($_SESSION['products'] as $product => $quantity) {
+            echo ucfirst($product) . ": " . $quantity . "<br>";
+        }
+        ?>
     </form>
 </body>
 
