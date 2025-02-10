@@ -14,7 +14,10 @@ if (!isset($_SESSION['products'])) {
         'rice' => 0,
     ];
 }
-
+// IMPLEMENTAR QUANTITY 
+if (isset($_SESSION['quantityGap'])) {
+    $_SESSION['quantityGap'] == htmlspecialchars($_POST["quantityGap"]);
+}
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -37,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['products'][$product]--;
         }
     }
-    if (isset($_POST['reset'])) {
-        $_SESSION['products'] = [
+    if (!isset($_SESSION['reset'])) {
+        $_SESSION['reset'] = [
             'softdrink' => 0,
             'water' => 0,
             'chicken' => 0,
@@ -64,14 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="" method="POST">
         <h2>Supermarket management</h2>
 
-        <!-- Campo del trabajador CORREGIDO  -->
+        <!-- Campo worker   -->
         <label for="worker">Worker name:</label>
-        <input type="text" name="worker"
-            value="<?php echo htmlspecialchars($_SESSION['worker']); ?>"
-            placeholder="Su nombre" required>
+        <input type="text" name="worker" value="<?php echo htmlspecialchars($_SESSION['worker']); ?>" placeholder="Su nombre" required>
         <br>
 
-        <!-- Selección de producto -->
+        <!-- Seleccion de producto -->
         <h3>Choose product: <br></h3>
         <select name="product" id="product">
             <option value="softdrink">Soft drink</option>
@@ -83,9 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <!-- Botones  -->
         <h3>Product quantity: <br></h3>
+        <input type="number" name="quantityGap" value="<?php echo htmlspecialchars($_SESSION['quantityGap']); ?>" placeholder="only numbers..." required>
         <button type="submit" name="bAdd" value="add">Add</button>
         <button type="submit" name="bRemove" value="remove">Remove</button>
-        <button type="submit" name="reset" value="reset">Reset All</button>
+        <button type="reset" name="reset" value="reset">Reset All</button>
 
         <!-- Inventario -->
         <h3>Inventory: <br></h3>
