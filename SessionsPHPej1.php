@@ -14,24 +14,36 @@ if (!isset($_SESSION['products'])) {
         'rice' => 0,
     ];
 }
-// IMPLEMENTAR QUANTITY 
-if (isset($_SESSION['quantityGap'])) {
-    $_SESSION['quantityGap'] == htmlspecialchars($_POST["quantityGap"]);
+if (!isset($_SESSION['quantityGap'])) {
+    $_SESSION['quantityGap'] = 0;
 }
 
+// Implementar quantity 
+if (isset($_POST["quantityGap"])) {
+    $_SESSION['quantityGap'] = htmlspecialchars($_POST["quantityGap"]);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // WORKER NAME
+    // Reset all products
+    if (isset($_POST['reset'])) {
+        $_SESSION['products'] = [
+            'softdrink' => 0,
+            'water' => 0,
+            'chicken' => 0,
+            'eggs' => 0,
+            'rice' => 0,
+        ];
+    }
+
+    // Worker name
     if (isset($_POST["worker"])) {
         $_SESSION["worker"] = htmlspecialchars($_POST["worker"]);
     }
 
-
-    // SELECT PRODUCT
+    // Select product
     $product = isset($_POST["product"]) ? $_POST["product"] : '';
 
-
-    // CANTIDAD PRODUCTO
+    // Cantidad producto
     if (isset($_POST['bAdd']) && $product && isset($_SESSION['products'][$product])) {
         $_SESSION['products'][$product]++;
     }
@@ -40,17 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['products'][$product]--;
         }
     }
-    if (!isset($_SESSION['reset'])) {
-        $_SESSION['reset'] = [
-            'softdrink' => 0,
-            'water' => 0,
-            'chicken' => 0,
-            'eggs' => 0,
-            'rice' => 0,
-        ];
-    }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -67,12 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="" method="POST">
         <h2>Supermarket management</h2>
 
-        <!-- Campo worker   -->
+        <!-- Campo worker -->
         <label for="worker">Worker name:</label>
         <input type="text" name="worker" value="<?php echo htmlspecialchars($_SESSION['worker']); ?>" placeholder="Su nombre" required>
         <br>
 
-        <!-- Seleccion de producto -->
+        <!-- Selección de producto -->
         <h3>Choose product: <br></h3>
         <select name="product" id="product">
             <option value="softdrink">Soft drink</option>
@@ -82,12 +84,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <option value="rice">Rice</option>
         </select>
 
-        <!-- Botones  -->
+        <!-- Botones -->
         <h3>Product quantity: <br></h3>
         <input type="number" name="quantityGap" value="<?php echo htmlspecialchars($_SESSION['quantityGap']); ?>" placeholder="only numbers..." required>
         <button type="submit" name="bAdd" value="add">Add</button>
         <button type="submit" name="bRemove" value="remove">Remove</button>
-        <button type="reset" name="reset" value="reset">Reset All</button>
+        <button type="submit" name="reset" value="reset">Reset All</button>
 
         <!-- Inventario -->
         <h3>Inventory: <br></h3>
