@@ -18,18 +18,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $quantity = $_POST['quantity'];
         $price = $_POST['price'];
 
-        // Guardar en session
-        $_SESSION['list'][] = [
-            'name' => $name,
-            'quantity' => $quantity,
-            'price' => $price,
-        ];
-        $message = 'Item added successfully!';
-    
-    // Actualizar un item
+        // Verificar si el item ya existe en la lista
+        $itemExists = false;
+        if (isset($_SESSION['list'])) {
+            foreach ($_SESSION['list'] as $item) {
+                if ($item['name'] === $name) {
+                    $itemExists = true;
+                    break;
+                }
+            }
+        }
+
+        if ($itemExists) {
+            $error = '[ERROR]: You can not add 2 items with the same name.';
+        } else {
+            // Guardar en session
+            $_SESSION['list'][] = [
+                'name' => $name,
+                'quantity' => $quantity,
+                'price' => $price,
+            ];
+            $message = 'Item added successfully!';
+        }
+
+        // Actualizar un item
     } elseif (isset($_POST['update'])) {
 
-    // Reset de formulario
+        // Reset de formulario
     } elseif (isset($_POST['reset'])) {
     }
 }
