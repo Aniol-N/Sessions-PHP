@@ -4,6 +4,7 @@ session_start();
 
 // Inicializar variables
 $name = '';
+$productCode = '';
 $quantity = '';
 $price = '';
 $index = '';
@@ -15,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Añadir item en el formulario
     if (isset($_POST['add'])) {
         $name = $_POST['name'];
+        $productCode = $_POST['code'];
         $quantity = $_POST['quantity'];
         $price = $_POST['price'];
 
@@ -35,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Guardar en session
             $_SESSION['list'][] = [
                 'name' => $name,
+                'code' => $productCode,
                 'quantity' => $quantity,
                 'price' => $price,
             ];
@@ -44,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Actualizar un item
     } elseif (isset($_POST['update'])) {
         $newName = $_POST['name'];
+        $newProductCode = $_POST['code'];
         $newQuantity = $_POST['quantity'];
         $newPrice = $_POST['price'];
         $index = $_POST['index'];
@@ -65,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Actualizar el item
                 $_SESSION['list'][$index] = [
                     'name' => $newName,
+                    'code' => $productCode,
                     'quantity' => $newQuantity,
                     'price' => $newPrice,
                 ];
@@ -79,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $index = $_POST['index'];
         if (isset($_SESSION['list'][$index])) {
             $name = $_SESSION['list'][$index]['name'];
+            $productCode = $_SESSION['list'][$index]['code'];
             $quantity = $_SESSION['list'][$index]['quantity'];
             $price = $_SESSION['list'][$index]['price'];
         }
@@ -96,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Reset de formulario
     } elseif (isset($_POST['reset'])) {
         $name = '';
+        $productCode = '';
         $quantity = '';
         $price = '';
         $index = '';
@@ -151,11 +158,11 @@ if (isset($_POST['total'])) {
 
 <body>
     <h1>Shopping list</h1>
-    
+
     <?php if ($error): ?>
         <div class="error"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
-    
+
     <?php if ($message): ?>
         <div class="message"><?php echo htmlspecialchars($message); ?></div>
     <?php endif; ?>
@@ -163,6 +170,9 @@ if (isset($_POST['total'])) {
     <form method="post">
         <label for="name">name:</label>
         <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($name); ?>" required>
+        <br>
+        <label for="code">code:</label>
+        <input type="text" name="code" id="code" value="<?php echo htmlspecialchars($productCode); ?>" maxlength="3" placeholder="3 numbers, e.g. 123"  required>
         <br>
         <label for="quantity">quantity:</label>
         <input type="number" name="quantity" id="quantity" value="<?php echo htmlspecialchars($quantity); ?>" min="1" required>
@@ -180,6 +190,7 @@ if (isset($_POST['total'])) {
         <thead>
             <tr>
                 <th>name</th>
+                <th>code</th>
                 <th>quantity</th>
                 <th>price</th>
                 <th>cost</th>
@@ -191,6 +202,7 @@ if (isset($_POST['total'])) {
                 <?php foreach ($_SESSION['list'] as $index => $item): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($item['name']); ?></td>
+                        <td><?php echo htmlspecialchars($item['code']); ?></td>
                         <td><?php echo htmlspecialchars($item['quantity']); ?></td>
                         <td><?php echo htmlspecialchars($item['price']); ?></td>
                         <td><?php echo htmlspecialchars($item['quantity'] * $item['price']); ?></td>
